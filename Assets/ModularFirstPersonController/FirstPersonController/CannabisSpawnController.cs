@@ -4,7 +4,7 @@ public class CannabisSpawnController : MonoBehaviour
 {
     public GameObject cannabisPlantPrefab; // Reference to the CannabisPlant prefab
     public GameObject[] plantModels; // Array to hold different plant models
-    public float modelChangeInterval = 5f; // Interval between model changes
+    public float modelChangeInterval = 60f; // Interval between model changes
 
     // Reference to the main camera
     private Camera mainCamera;
