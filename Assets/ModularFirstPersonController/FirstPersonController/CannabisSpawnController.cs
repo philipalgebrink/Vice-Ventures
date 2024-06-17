@@ -31,31 +31,25 @@ public class CannabisSpawnController : MonoBehaviour
         
         // Raycast to ensure the plant spawns on a suitable surface (e.g., ground)
         RaycastHit hit;
-        int layerMask = LayerMask.GetMask("Ground"); // Define layers you want to spawn on
-        
-        if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, Mathf.Infinity))
         {
             spawnPosition = hit.point + Vector3.up * 0.2f; // Offset spawn position upwards by 0.5 units
+        }
 
-            // Spawn the cannabis plant prefab
-            GameObject newPlant = Instantiate(cannabisPlantPrefab, spawnPosition, Quaternion.identity);
-            
-            // Get the CannabisPlant component from the spawned plant
-            CannabisPlant plantScript = newPlant.GetComponent<CannabisPlant>();
+        // Spawn the cannabis plant prefab
+        GameObject newPlant = Instantiate(cannabisPlantPrefab, spawnPosition, Quaternion.identity);
+        
+        // Get the CannabisPlant component from the spawned plant
+        CannabisPlant plantScript = newPlant.GetComponent<CannabisPlant>();
 
-            // Initialize the CannabisPlant script
-            if (plantScript != null)
-            {
-                plantScript.Initialize(plantModels, modelChangeInterval);
-            }
-            else
-            {
-                Debug.LogError("CannabisPlant component not found on prefab.");
-            }
+        // Initialize the CannabisPlant script
+        if (plantScript != null)
+        {
+            plantScript.Initialize(plantModels, modelChangeInterval);
         }
         else
         {
-            Debug.Log("Cannot spawn plant here. Aim at a floor or table.");
+            Debug.LogError("CannabisPlant component not found on prefab.");
         }
     }
 }
