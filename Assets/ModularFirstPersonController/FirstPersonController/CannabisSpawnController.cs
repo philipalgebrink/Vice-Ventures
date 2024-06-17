@@ -41,7 +41,7 @@ public class CannabisSpawnController : MonoBehaviour
             // Check if hit point is within the allowed distance
             if (hit.distance <= maxSpawnDistance)
             {
-                spawnPosition = hit.point + Vector3.up * 0.2f; // Offset spawn position upwards by 0.2 units
+                spawnPosition = hit.point + Vector3.up * 0.5f; // Offset spawn position upwards by 0.5 units
 
                 // Spawn the cannabis plant prefab
                 GameObject newPlant = Instantiate(cannabisPlantPrefab, spawnPosition, Quaternion.identity);
