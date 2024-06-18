@@ -1,0 +1,108 @@
+using UnityEngine;
+using TMPro;
+
+public class InventoryManager : MonoBehaviour
+{
+    public GameObject inventorySlotPrefab; // Drag your InventorySlot prefab here in the Inspector
+    public Transform inventoryPanel; // Drag your Inventory Panel here in the Inspector
+    public PlayerInventory playerInventory; // Reference to your PlayerInventory script
+
+    private GameObject[] inventorySlots = new GameObject[30]; // Array to hold all inventory slots
+
+    void Start()
+    {
+        CreateInventorySlots(); // Create all inventory slots initially
+        playerInventory.OnInventoryChanged += PopulateInventoryUI; // Subscribe to inventory changes
+    }
+
+    void CreateInventorySlots()
+    {
+        // Get the RectTransform of the InventoryPanel
+        RectTransform panelRectTransform = inventoryPanel.GetComponent<RectTransform>();
+
+        // Define slot size and padding (adjust these values as needed)
+        Vector2 slotSize = new Vector2(200f, 100f); // Example slot size
+        Vector2 slotPadding = new Vector2(2f, 2f); // Example padding between slots
+
+        // Number of columns and rows for the grid (adjust as needed)
+        int columns = 6; // Example: 6 columns
+        int rows = 5; // Example: 5 rows
+
+        // Calculate total width and height of the grid
+        float gridWidth = columns * (slotSize.x + slotPadding.x) - slotPadding.x;
+        float gridHeight = rows * (slotSize.y + slotPadding.y) - slotPadding.y;
+
+        // Calculate initial position of the top-left slot to center the grid
+        Vector2 panelSize = panelRectTransform.rect.size;
+        Vector2 initialPosition = new Vector2(
+            -gridWidth / 2f + slotSize.x / 2f, // Adjusted to center horizontally
+            gridHeight / 2f - slotSize.y / 2f   // Adjusted to center vertically
+        );
+
+        // Instantiate all inventory slots in a grid
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            // Calculate row and column index
+            int row = i / columns;
+            int col = i % columns;
+
+            // Instantiate the inventory slot prefab
+            GameObject slot = Instantiate(inventorySlotPrefab, inventoryPanel);
+
+            // Calculate position for this slot
+            float x = initialPosition.x + col * (slotSize.x + slotPadding.x);
+            float y = initialPosition.y - row * (slotSize.y + slotPadding.y);
+            Vector2 slotPosition = new Vector2(x, y);
+
+            // Set anchored position relative to panel
+            RectTransform slotRectTransform = slot.GetComponent<RectTransform>();
+            slotRectTransform.anchoredPosition = slotPosition;
+
+            // Optionally: Initialize other properties of the slot (e.g., text fields)
+
+            inventorySlots[i] = slot;
+        }
+    }
+
+
+
+    // Method to populate inventory UI with current inventory items
+    void PopulateInventoryUI()
+    {
+        for (int i = 0; i < playerInventory.inventory.Count; i++)
+        {
+            InventoryItem item = playerInventory.inventory[i];
+            UpdateInventorySlot(i, item);
+        }
+    }
+
+    // Example method to add an item to the inventory
+    public void AddItemToInventory(InventoryItem newItem)
+    {
+        // Find the first available slot and update it with the new item
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            if (!inventorySlots[i].activeSelf)
+            {
+                UpdateInventorySlot(i, newItem);
+                return;
+            }
+        }
+
+        Debug.Log("Inventory is full!"); // Handle case where inventory is full
+    }
+
+    void UpdateInventorySlot(int slotIndex, InventoryItem item)
+    {
+        GameObject slot = inventorySlots[slotIndex];
+        slot.SetActive(true); // Activate the slot
+
+        TextMeshProUGUI nameText = slot.transform.Find("Name").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI descriptionText = slot.transform.Find("Description").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI quantityText = slot.transform.Find("Quantity").GetComponent<TextMeshProUGUI>();
+
+        nameText.text = item.itemName;
+        descriptionText.text = item.description;
+        quantityText.text = item.quantity.ToString();
+    }
+}
