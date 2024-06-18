@@ -46,6 +46,12 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.obj
+*.mtl
+*.prefab.meta
+*.prefab
+*obj.meta
+*mtl.meta
 
 # Unity3D generated meta files
 *.pidb.meta

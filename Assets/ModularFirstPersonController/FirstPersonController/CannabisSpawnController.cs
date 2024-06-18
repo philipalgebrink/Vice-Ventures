@@ -4,7 +4,7 @@ public class CannabisSpawnController : MonoBehaviour
 {
     public GameObject cannabisPlantPrefab; // Reference to the CannabisPlant prefab
     public GameObject[] plantModels; // Array to hold different plant models
-    public float modelChangeInterval = 60f; // Interval between model changes
+    public float modelChangeInterval = 5f; // Interval between model changes
 
     // Reference to the main camera
     private Camera mainCamera;
@@ -31,11 +31,11 @@ public class CannabisSpawnController : MonoBehaviour
 
         // Calculate spawn position in front of the camera
         Vector3 spawnPosition = mainCamera.transform.position + mainCamera.transform.forward * 2f;
-        
+
         // Raycast to ensure the plant spawns on a suitable surface within the distance limit
         RaycastHit hit;
         int layerMask = LayerMask.GetMask("Ground"); // Define layers you want to spawn on
-        
+
         if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, maxSpawnDistance, layerMask))
         {
             // Check if hit point is within the allowed distance
@@ -45,7 +45,7 @@ public class CannabisSpawnController : MonoBehaviour
 
                 // Spawn the cannabis plant prefab
                 GameObject newPlant = Instantiate(cannabisPlantPrefab, spawnPosition, Quaternion.identity);
-                
+
                 // Get the CannabisPlant component from the spawned plant
                 CannabisPlant plantScript = newPlant.GetComponent<CannabisPlant>();
 
