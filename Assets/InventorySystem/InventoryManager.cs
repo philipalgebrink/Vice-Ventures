@@ -8,11 +8,35 @@ public class InventoryManager : MonoBehaviour
     public PlayerInventory playerInventory; // Reference to your PlayerInventory script
 
     private GameObject[] inventorySlots = new GameObject[30]; // Array to hold all inventory slots
+    public bool isInventoryOpen = false;
+    public GameObject crosshairObject;
 
     void Start()
     {
+        // Hide cursor at start
+        Cursor.visible = false;
+
         CreateInventorySlots(); // Create all inventory slots initially
         playerInventory.OnInventoryChanged += PopulateInventoryUI; // Subscribe to inventory changes
+        inventoryPanel.gameObject.SetActive(false); // Initially hide inventory panel
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            ToggleInventoryPanel();
+        }
+
+        // Lock cursor position when inventory panel is open
+        if (isInventoryOpen)
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     void CreateInventorySlots()
@@ -64,9 +88,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-
-
-    // Method to populate inventory UI with current inventory items
     void PopulateInventoryUI()
     {
         for (int i = 0; i < playerInventory.inventory.Count; i++)
@@ -76,7 +97,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    // Example method to add an item to the inventory
     public void AddItemToInventory(InventoryItem newItem)
     {
         // Find the first available slot and update it with the new item
@@ -104,5 +124,20 @@ public class InventoryManager : MonoBehaviour
         nameText.text = item.itemName;
         descriptionText.text = item.description;
         quantityText.text = item.quantity.ToString();
+    }
+
+    void ToggleInventoryPanel()
+    {
+        isInventoryOpen = !isInventoryOpen;
+        inventoryPanel.gameObject.SetActive(isInventoryOpen);
+
+        // Toggle cursor visibility based on inventory open state
+        Cursor.visible = isInventoryOpen;
+
+        // Toggle crosshair visibility based on inventory open state
+        if (crosshairObject != null)
+        {
+            crosshairObject.SetActive(!isInventoryOpen);
+        }
     }
 }
