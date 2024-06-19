@@ -9,12 +9,12 @@ public class InventoryItem
     public int quantity;
     public int price;
 
-    public InventoryItem(ItemData itemData, int _quantity)
+    public InventoryItem(string _itemName, Sprite _icon, string _description, int _quantity, int _price)
     {
-        itemName = itemData.itemName;
-        icon = itemData.icon;
-        description = itemData.description;
+        itemName = _itemName;
+        icon = _icon;
+        description = _description;
         quantity = _quantity;
-        price = itemData.price;
+        price = _price;
     }
 }

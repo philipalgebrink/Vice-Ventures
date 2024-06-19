@@ -7,6 +7,7 @@ public class InventoryManager : MonoBehaviour
     public GameObject inventorySlotPrefab; // Drag your InventorySlot prefab here in the Inspector
     public Transform inventoryPanel; // Drag your Inventory Panel here in the Inspector
     public PlayerInventory playerInventory; // Reference to your PlayerInventory script
+    public GameObject player; // Reference to the player
 
     private GameObject[] inventorySlots = new GameObject[30]; // Array to hold all inventory slots
     public bool isInventoryOpen = false;
@@ -14,7 +15,6 @@ public class InventoryManager : MonoBehaviour
 
     void Start()
     {
-        // Hide cursor at start
         Cursor.visible = false;
 
         CreateInventorySlots(); // Create all inventory slots initially
@@ -27,20 +27,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            // Example of adding an item using the new method
-            playerInventory.AddItem("Cannabis Seed", 1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            // Example of adding an item using the new method
-            playerInventory.AddItem("Unpacked Cannabis", 1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            // Example of adding an item using the new method
-            playerInventory.AddItem("Packed Cannabis", 1);
+            playerInventory.AddItem("Cannabis Seed", 5);
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -61,54 +48,54 @@ public class InventoryManager : MonoBehaviour
 
     void CreateInventorySlots()
     {
-        // Get the RectTransform of the InventoryPanel
         RectTransform panelRectTransform = inventoryPanel.GetComponent<RectTransform>();
 
-        // Define slot size and padding (adjust these values as needed)
         Vector2 originalSlotSize = new Vector2(200f, 100f); // Original slot size
         Vector2 slotSize = originalSlotSize * 1.5f; // Adjusted slot size for 1.5 scale
         Vector2 originalSlotPadding = new Vector2(2f, 2f); // Original padding between slots
         Vector2 slotPadding = originalSlotPadding * 1.5f; // Adjusted padding for 1.5 scale
 
-        // Number of columns and rows for the grid (adjust as needed)
         int columns = 6; // Example: 6 columns
         int rows = 5; // Example: 5 rows
 
-        // Calculate total width and height of the grid
         float gridWidth = columns * (slotSize.x + slotPadding.x) - slotPadding.x;
         float gridHeight = rows * (slotSize.y + slotPadding.y) - slotPadding.y;
 
-        // Calculate initial position of the top-left slot to center the grid
         Vector2 panelSize = panelRectTransform.rect.size;
         Vector2 initialPosition = new Vector2(
-            -gridWidth / 2f + slotSize.x / 2f, // Adjusted to center horizontally
-            gridHeight / 2f - slotSize.y / 2f   // Adjusted to center vertically
+            -gridWidth / 2f + slotSize.x / 2f,
+            gridHeight / 2f - slotSize.y / 2f
         );
 
-        // Instantiate all inventory slots in a grid
         for (int i = 0; i < inventorySlots.Length; i++)
         {
-            // Calculate row and column index
             int row = i / columns;
             int col = i % columns;
 
-            // Instantiate the inventory slot prefab
             GameObject slot = Instantiate(inventorySlotPrefab, inventoryPanel);
 
-            // Calculate position for this slot
             float x = initialPosition.x + col * (slotSize.x + slotPadding.x);
             float y = initialPosition.y - row * (slotSize.y + slotPadding.y);
             Vector2 slotPosition = new Vector2(x, y);
 
-            // Set anchored position relative to panel
             RectTransform slotRectTransform = slot.GetComponent<RectTransform>();
             slotRectTransform.anchoredPosition = slotPosition;
 
-            // Set default alpha to 0
             Image iconImage = slot.transform.Find("Icon").GetComponent<Image>();
+            if (iconImage == null)
+            {
+                Debug.LogError("Icon Image component not found in slot prefab.");
+            }
             Color color = iconImage.color;
             color.a = 0f;
             iconImage.color = color;
+
+            InventorySlot inventorySlot = slot.GetComponent<InventorySlot>();
+            if (inventorySlot == null)
+            {
+                Debug.LogError("InventorySlot component not found in slot prefab.");
+            }
+            inventorySlot.inventoryManager = this; // Set the InventoryManager reference dynamically
 
             inventorySlots[i] = slot;
         }
@@ -116,7 +103,6 @@ public class InventoryManager : MonoBehaviour
 
     void InitializeInventoryUI()
     {
-        // Set all slots to their initial state
         for (int i = 0; i < inventorySlots.Length; i++)
         {
             UpdateInventorySlot(i, null);
@@ -125,16 +111,22 @@ public class InventoryManager : MonoBehaviour
 
     void PopulateInventoryUI()
     {
-        for (int i = 0; i < playerInventory.inventory.Count; i++)
+        for (int i = 0; i < inventorySlots.Length; i++)
         {
-            InventoryItem item = playerInventory.inventory[i];
-            UpdateInventorySlot(i, item);
+            if (i < playerInventory.inventory.Count)
+            {
+                InventoryItem item = playerInventory.inventory[i];
+                UpdateInventorySlot(i, item);
+            }
+            else
+            {
+                UpdateInventorySlot(i, null);
+            }
         }
     }
 
     public void AddItemToInventory(InventoryItem newItem)
     {
-        // Find the first available slot and update it with the new item
         for (int i = 0; i < inventorySlots.Length; i++)
         {
             if (!inventorySlots[i].activeSelf)
@@ -155,8 +147,22 @@ public class InventoryManager : MonoBehaviour
         TextMeshProUGUI nameText = slot.transform.Find("Name").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI descriptionText = slot.transform.Find("Description").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI quantityText = slot.transform.Find("Quantity").GetComponent<TextMeshProUGUI>();
-        Image iconImage = slot.transform.Find("Icon").GetComponent<Image>();
-        Image circleImage = slot.transform.Find("Circle").GetComponent<Image>();
+        Image iconImage = slot.transform.Find("Icon").GetComponent<Image>(); // Get the Icon image component
+        Image circleImage = slot.transform.Find("Circle").GetComponent<Image>(); // Get the Circle image component
+
+        if (nameText == null || descriptionText == null || quantityText == null || iconImage == null || circleImage == null)
+        {
+            Debug.LogError("One or more UI components are missing in the slot prefab.");
+            return;
+        }
+
+        InventorySlot inventorySlot = slot.GetComponent<InventorySlot>();
+        if (inventorySlot == null)
+        {
+            Debug.LogError("InventorySlot component not found in slot prefab.");
+            return;
+        }
+        inventorySlot.item = item;
 
         if (item != null)
         {
@@ -172,10 +178,24 @@ public class InventoryManager : MonoBehaviour
                 iconImage.color = color;
                 iconImage.enabled = true;
 
+                // Set Circle alpha to 1
                 Color circleColor = circleImage.color;
                 circleColor.a = 1f;
                 circleImage.color = circleColor;
                 circleImage.enabled = true;
+            }
+            else
+            {
+                Color color = iconImage.color;
+                color.a = 0f; // Set alpha to 0 (invisible)
+                iconImage.color = color;
+                iconImage.enabled = false;
+
+                // Set Circle alpha to 0
+                Color circleColor = circleImage.color;
+                circleColor.a = 0f;
+                circleImage.color = circleColor;
+                circleImage.enabled = false;
             }
         }
         else
@@ -187,6 +207,12 @@ public class InventoryManager : MonoBehaviour
             color.a = 0f; // Set alpha to 0 (invisible)
             iconImage.color = color;
             iconImage.enabled = false;
+
+            // Set Circle alpha to 0
+            Color circleColor = circleImage.color;
+            circleColor.a = 0f;
+            circleImage.color = circleColor;
+            circleImage.enabled = false;
         }
     }
 
@@ -195,13 +221,30 @@ public class InventoryManager : MonoBehaviour
         isInventoryOpen = !isInventoryOpen;
         inventoryPanel.gameObject.SetActive(isInventoryOpen);
 
-        // Toggle cursor visibility based on inventory open state
         Cursor.visible = isInventoryOpen;
 
-        // Toggle crosshair visibility based on inventory open state
         if (crosshairObject != null)
         {
             crosshairObject.SetActive(!isInventoryOpen);
+        }
+    }
+
+    public void SpawnItem(InventoryItem item)
+    {
+        string prefabPath = "Items/" + item.itemName; // Assuming prefab names match item names including spaces
+        GameObject itemPrefab = Resources.Load<GameObject>(prefabPath);
+
+        if (itemPrefab != null)
+        {
+            Vector3 spawnPosition = player.transform.position + player.transform.forward * 2f; // Spawn 2 units in front of the player
+            Instantiate(itemPrefab, spawnPosition, Quaternion.identity);
+
+            // Reduce the quantity of the item in the inventory
+            playerInventory.RemoveItem(item.itemName, 1);
+        }
+        else
+        {
+            Debug.LogWarning("Prefab not found for item: " + item.itemName + " at path: " + prefabPath);
         }
     }
 }
