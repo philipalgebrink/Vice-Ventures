@@ -279,6 +279,7 @@ public class InventoryManager : MonoBehaviour
 
             if (itemInHand.itemName == "Cannabis Seed")
             {
+                Debug.Log("Knows I have seed in hand");
                 PlantCannabisSeed(); // Call PlantCannabisSeed when using Cannabis Seed
             }
             else if (itemInHand.itemName == "Pot")
@@ -307,29 +308,54 @@ public class InventoryManager : MonoBehaviour
 
     void PlantCannabisSeed()
     {
-        Vector3 plantPosition = CalculatePlantPosition(); // Calculate where to plant
-        GameObject cannabisPlantPrefab = Resources.Load<GameObject>("Items/CannabisPlant"); // Load plant prefab
+        // Raycast from the center of the screen (where crosshair is)
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
+        RaycastHit hit;
 
-        if (cannabisPlantPrefab != null)
+        if (Physics.Raycast(ray, out hit))
         {
-            Instantiate(cannabisPlantPrefab, plantPosition, Quaternion.identity);
-            Debug.Log("[Vice] Cannabis seed planted at position: " + plantPosition);
+            // Check if the hit object has the "Pot" tag
+            if (hit.collider.CompareTag("Pot"))
+            {
+                // Get the position and rotation of the pot
+                Vector3 plantPosition = hit.collider.transform.position;
+                Quaternion plantRotation = hit.collider.transform.rotation;
 
-            playerInventory.RemoveItem(currentItemInHand.itemName, 1); // Remove seed from inventory
-            PopulateInventoryUI(); // Update UI
-            currentItemInHand = null; // Clear item from hand
-            OnInventoryUIChanged?.Invoke(); // Notify UI change event
+                // Load and instantiate the cannabis plant prefab
+                GameObject cannabisPlantPrefab = Resources.Load<GameObject>("Items/CannabisPlant");
+                if (cannabisPlantPrefab != null)
+                {
+                    // Instantiate the cannabis plant at the pot's position and rotation
+                    GameObject newPlant = Instantiate(cannabisPlantPrefab, plantPosition, plantRotation);
+
+                    // Remove the pot (hit object) from the scene
+                    Destroy(hit.collider.gameObject);
+
+                    Debug.Log("[Vice] Cannabis seed planted at position: " + plantPosition);
+
+                    // Remove seed from inventory and update UI
+                    playerInventory.RemoveItem(currentItemInHand.itemName, 1);
+                    PopulateInventoryUI();
+                    currentItemInHand = null;
+                    OnInventoryUIChanged?.Invoke();
+                }
+                else
+                {
+                    Debug.Log("[Vice] Cannabis plant prefab not found.");
+                }
+            }
+            else
+            {
+                Debug.LogError("[Vice] Object hit is not tagged as 'Pot'.");
+            }
         }
         else
         {
-            Debug.Log("[Vice] Cannabis plant prefab not found.");
+            Debug.LogError("[Vice] No valid object hit detected.");
         }
     }
 
-    Vector3 CalculatePlantPosition()
-    {
-        return player.transform.position + player.transform.forward * 2f; // Example: calculate position based on player's position
-    }
+
 
     public void OnSlotClicked(InventoryItem item)
     {
