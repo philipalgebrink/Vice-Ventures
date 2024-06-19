@@ -5,8 +5,25 @@ public class CannabisPlant : MonoBehaviour
     [SerializeField] private float modelChangeInterval = 30f; // Interval between model changes
     [SerializeField] private GameObject[] plantModels; // Array to hold different plant models
 
-    private int currentModelIndex = -1; // Index of current model (Hotfix to put as -1, dont ask me why)
+    private int currentModelIndex = 0; // Index of current model
     private float nextModelChangeTime; // Time to change to next model
+
+    void Start()
+    {
+        // Initialize the first model and set up next model change time
+        InstantiatePlantModel();
+        nextModelChangeTime = Time.time + modelChangeInterval;
+    }
+
+    void Update()
+    {
+        // Check if it's time to change the plant model
+        if (Time.time >= nextModelChangeTime)
+        {
+            ChangeToNextModel();
+            nextModelChangeTime = Time.time + modelChangeInterval; // Reset the timer
+        }
+    }
 
     public void Initialize(GameObject[] models, float interval)
     {
@@ -18,27 +35,6 @@ public class CannabisPlant : MonoBehaviour
 
         plantModels = models;
         modelChangeInterval = interval;
-
-        // Initialize the first model and set up next model change time
-        InstantiatePlantModel();
-        nextModelChangeTime = Time.time + modelChangeInterval;
-    }
-
-    void Update()
-    {
-        // Check if plantModels array is null or empty
-        if (plantModels == null || plantModels.Length == 0)
-        {
-            Debug.LogError("[Vice] CannabisPlant: plantModels array is not initialized or empty.");
-            return;
-        }
-
-        // Check if it's time to change the plant model
-        if (Time.time >= nextModelChangeTime)
-        {
-            ChangeToNextModel();
-            nextModelChangeTime += modelChangeInterval;
-        }
     }
 
     void InstantiatePlantModel()
@@ -57,13 +53,6 @@ public class CannabisPlant : MonoBehaviour
 
     void ChangeToNextModel()
     {
-        // Check if plantModels array is null or empty
-        if (plantModels == null || plantModels.Length == 0)
-        {
-            Debug.LogError("[Vice] CannabisPlant: plantModels array is not initialized or empty.");
-            return;
-        }
-
         // Increment index for next model
         currentModelIndex++;
 
@@ -83,8 +72,6 @@ public class CannabisPlant : MonoBehaviour
         // Spawn next plant model at the position of this GameObject
         GameObject nextModel = Instantiate(plantModels[currentModelIndex], transform.position, Quaternion.identity);
         nextModel.transform.parent = transform; // Set as child of this GameObject
-
         Debug.Log($"[Vice] Spawned plant model: {plantModels[currentModelIndex].name} at index {currentModelIndex}");
     }
-
 }
