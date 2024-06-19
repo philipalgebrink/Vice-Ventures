@@ -1,33 +1,40 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
     public event Action OnInventoryChanged; // Event to notify when inventory changes
+    public ItemDatabase itemDatabase; // Reference to the ItemDatabase scriptable object
 
     private int maxSize = 30;
-    private int currentSize;
     public List<InventoryItem> inventory = new List<InventoryItem>();
 
-    public void AddItem(InventoryItem item)
+    public void AddItem(string itemName, int quantity)
     {
-        InventoryItem existingItem = inventory.Find(i => i.itemName == item.itemName);
+        ItemData itemData = itemDatabase.GetItemByName(itemName);
+        if (itemData == null)
+        {
+            Debug.LogWarning("Item not found in database: " + itemName);
+            return;
+        }
+
+        InventoryItem existingItem = inventory.Find(i => i.itemName == itemName);
         if (existingItem != null)
         {
-            existingItem.quantity += item.quantity; // Increase quantity if already exists
+            existingItem.quantity += quantity; // Increase quantity if already exists
             NotifyInventoryChanged(); // Notify UI of change
             return;
         }
 
-        if (currentSize >= maxSize)
+        if (inventory.Count >= maxSize)
         {
-            // Inventory full handling
+            Debug.LogWarning("Inventory is full!");
             return;
         }
 
-        // Add item
-        inventory.Add(item);
+        // Add new item
+        inventory.Add(new InventoryItem(itemData, quantity));
         NotifyInventoryChanged(); // Notify UI of change
     }
 
@@ -35,7 +42,6 @@ public class PlayerInventory : MonoBehaviour
     {
         inventory.Remove(item);
         NotifyInventoryChanged(); // Notify UI of change
-        // Optionally: Update UI or trigger events based on inventory changes
     }
 
     private void NotifyInventoryChanged()

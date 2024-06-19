@@ -9,21 +9,12 @@ public class InventoryItem
     public int quantity;
     public int price;
 
-    public InventoryItem(string _itemName, Sprite _icon, string _description, int _quantity, int _price)
+    public InventoryItem(ItemData itemData, int _quantity)
     {
-        itemName = _itemName;
-        icon = _icon;
-        description = _description;
+        itemName = itemData.itemName;
+        icon = itemData.icon;
+        description = itemData.description;
         quantity = _quantity;
-        price = _price;
-    }
-
-    public InventoryItem(string _itemName, string _description, int _quantity, int _price)
-    {
-        itemName = _itemName;
-        description = _description;
-        quantity = _quantity;
-        price = _price;
-        icon = null; // Default to null if not provided
+        price = itemData.price;
     }
 }

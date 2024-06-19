@@ -1,6 +1,6 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI; // Make sure to include this for Image
+using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -18,6 +18,7 @@ public class InventoryManager : MonoBehaviour
         Cursor.visible = false;
 
         CreateInventorySlots(); // Create all inventory slots initially
+        InitializeInventoryUI(); // Initialize all slots to the correct state
         playerInventory.OnInventoryChanged += PopulateInventoryUI; // Subscribe to inventory changes
         inventoryPanel.gameObject.SetActive(false); // Initially hide inventory panel
     }
@@ -26,31 +27,8 @@ public class InventoryManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            // Load the sprite from the Resources folder
-            Sprite seedIcon = Resources.Load<Sprite>("Drugs/Icons/Seed");
-            if (seedIcon != null)
-            {
-                playerInventory.AddItem(new InventoryItem("Cannabis Seed", seedIcon, "A cannabis seed", 1, 20));
-            }
-            else
-            {
-                Debug.LogWarning("Seed icon not found in Resources/Drugs/Icons/");
-                playerInventory.AddItem(new InventoryItem("Cannabis Seed", "A cannabis seed", 1, 20));
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            // Load the sprite from the Resources folder
-            Sprite seedIcon = Resources.Load<Sprite>("Drugs/Icons/Seed");
-            if (seedIcon != null)
-            {
-                playerInventory.AddItem(new InventoryItem("Cannabis Seed", seedIcon, "A cannabis seed", 5, 20));
-            }
-            else
-            {
-                Debug.LogWarning("Seed icon not found in Resources/Drugs/Icons/");
-                playerInventory.AddItem(new InventoryItem("Cannabis Seed", "A cannabis seed", 1, 20));
-            }
+            // Example of adding an item using the new method
+            playerInventory.AddItem("Cannabis Seed", 5);
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -112,9 +90,22 @@ public class InventoryManager : MonoBehaviour
             RectTransform slotRectTransform = slot.GetComponent<RectTransform>();
             slotRectTransform.anchoredPosition = slotPosition;
 
-            // Optionally: Initialize other properties of the slot (e.g., text fields)
+            // Set default alpha to 0
+            Image iconImage = slot.transform.Find("Icon").GetComponent<Image>();
+            Color color = iconImage.color;
+            color.a = 0f;
+            iconImage.color = color;
 
             inventorySlots[i] = slot;
+        }
+    }
+
+    void InitializeInventoryUI()
+    {
+        // Set all slots to their initial state
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            UpdateInventorySlot(i, null);
         }
     }
 
@@ -152,20 +143,39 @@ public class InventoryManager : MonoBehaviour
         TextMeshProUGUI quantityText = slot.transform.Find("Quantity").GetComponent<TextMeshProUGUI>();
         Image iconImage = slot.transform.Find("Icon").GetComponent<Image>(); // Get the Icon image component
 
-        nameText.text = item.itemName;
-        descriptionText.text = item.description;
-        quantityText.text = item.quantity.ToString();
-
-        if (item.icon != null)
+        if (item != null)
         {
-            iconImage.sprite = item.icon;
+            nameText.text = item.itemName;
+            descriptionText.text = item.description;
+            quantityText.text = item.quantity.ToString();
+
+            if (item.icon != null)
+            {
+                iconImage.sprite = item.icon;
+                Color color = iconImage.color;
+                color.a = 1f; // Set alpha to 1 (fully visible)
+                iconImage.color = color;
+                iconImage.enabled = true;
+            }
+            else
+            {
+                Color color = iconImage.color;
+                color.a = 0f; // Set alpha to 0 (invisible)
+                iconImage.color = color;
+                iconImage.enabled = false;
+            }
+        }
+        else
+        {
+            nameText.text = "";
+            descriptionText.text = "";
+            quantityText.text = "";
             Color color = iconImage.color;
-            color.a = 1f; // Set alpha to 1 (fully visible)
+            color.a = 0f; // Set alpha to 0 (invisible)
             iconImage.color = color;
+            iconImage.enabled = false;
         }
     }
-
-
 
     void ToggleInventoryPanel()
     {

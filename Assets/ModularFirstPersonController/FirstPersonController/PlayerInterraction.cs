@@ -1,38 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInteraction : MonoBehaviour
+public class PlayerInterraction : MonoBehaviour
 {
-    public PlayerInventory playerInventory;
+    public PlayerInventory playerInventory; // Reference to the PlayerInventory script
+
     void Update()
     {
-
-        if (Input.GetKeyDown(KeyCode.Y))
+        // Example interaction logic
+        /*
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            playerInventory.AddItem(new InventoryItem("Test3", "Testest3", 5, 20));
+            playerInventory.AddItem("Cannabis Seed", 5); // Add 5 Cannabis Seeds
         }
-        if (Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            playerInventory.AddItem(new InventoryItem("Test4", "Testest4", 5, 20));
+            playerInventory.AddItem("Cannabis", 1); // Add 1 Unpacked Cannabis Potion
         }
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            playerInventory.AddItem(new InventoryItem("Test5", "Testest5", 5, 20));
+            playerInventory.AddItem("Packed Cannabis", 2); // Add 2 Mana Potions
         }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            playerInventory.AddItem(new InventoryItem("Test6", "Testest6", 5, 20));
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            playerInventory.AddItem(new InventoryItem("Test7", "Testest7", 5, 20));
-        }
-    }
-
-    public void PickupItem(InventoryItem item)
-    {
-        playerInventory.AddItem(item);
-        // Optionally: Play pickup sound, update UI, etc.
+        */
     }
 }
