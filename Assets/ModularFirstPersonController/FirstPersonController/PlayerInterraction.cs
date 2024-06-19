@@ -1,25 +1,67 @@
 using UnityEngine;
 
-public class PlayerInterraction : MonoBehaviour
+public class PlayerInteraction : MonoBehaviour
 {
     public PlayerInventory playerInventory; // Reference to the PlayerInventory script
+    public GameObject cannabisPlantPrefab; // Reference to the CannabisPlant prefab
+    public GameObject[] plantModels; // Array to hold different plant models
+    public float modelChangeInterval = 5f; // Interval between model changes
 
     void Update()
     {
-        // Example interaction logic
-        /*
-        if (Input.GetKeyDown(KeyCode.R))
+        // Example interaction logic to spawn the cannabis plant from inventory
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            playerInventory.AddItem("Cannabis Seed", 5); // Add 5 Cannabis Seeds
+            // Replace this with your actual detection and interaction logic for the pot
+            GameObject potObject = DetectPot(); // Implement DetectPot to get the pot GameObject
+
+            if (potObject != null && playerInventory.HasItem("Cannabis Seed"))
+            {
+                // Get the position of the pot
+                Vector3 spawnPosition = potObject.transform.position;
+
+                // Remove the pot from the scene
+                Destroy(potObject);
+
+                // Spawn the cannabis plant prefab at the pot's position
+                SpawnCannabisPlant(spawnPosition);
+
+                // Remove one cannabis seed from inventory
+                playerInventory.RemoveItem("Cannabis Seed", 1);
+            }
         }
-        if (Input.GetKeyDown(KeyCode.T))
+    }
+
+    // Example method to detect the pot object (replace with your actual detection logic)
+    GameObject DetectPot()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 5f))
         {
-            playerInventory.AddItem("Cannabis", 1); // Add 1 Unpacked Cannabis
+            if (hit.collider.CompareTag("Pot")) // Adjust with your tag or layer for pots
+            {
+                return hit.collider.gameObject;
+            }
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        return null;
+    }
+
+    void SpawnCannabisPlant(Vector3 spawnPosition)
+    {
+        // Instantiate the cannabis plant prefab at the specified position
+        GameObject newPlant = Instantiate(cannabisPlantPrefab, spawnPosition, Quaternion.identity);
+
+        // Get the CannabisPlant component from the spawned plant
+        CannabisPlant plantScript = newPlant.GetComponent<CannabisPlant>();
+
+        // Initialize the CannabisPlant script
+        if (plantScript != null)
         {
-            playerInventory.AddItem("Packed Cannabis", 2); // Add 2 Packed Cannabis
+            plantScript.Initialize(plantModels, modelChangeInterval);
         }
-        */
+        else
+        {
+            Debug.LogError("CannabisPlant component not found on prefab.");
+        }
     }
 }

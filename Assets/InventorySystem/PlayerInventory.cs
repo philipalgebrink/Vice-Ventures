@@ -80,6 +80,12 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    // Method to check if the player has a specific item
+    public bool HasItem(string itemName)
+    {
+        return inventory.Exists(item => item.itemName == itemName);
+    }
+
     private void NotifyInventoryChanged()
     {
         OnInventoryChanged?.Invoke(); // Invoke the event if there are subscribers

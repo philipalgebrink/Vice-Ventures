@@ -29,6 +29,10 @@ public class InventoryManager : MonoBehaviour
         {
             playerInventory.AddItem("Cannabis Seed", 5);
         }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            playerInventory.AddItem("Pot", 5);
+        }
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
