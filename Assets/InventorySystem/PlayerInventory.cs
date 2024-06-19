@@ -7,7 +7,7 @@ public class PlayerInventory : MonoBehaviour
     private int maxSize = 30;
     public List<InventoryItem> inventory = new List<InventoryItem>();
     public event System.Action OnInventoryChanged;
-    private InventoryItem itemInHand; // Track the item currently in hand
+    private InventoryItem currentItemInHand; // Track the item currently in hand
     public ItemDatabase itemDatabase;
 
     void Start()
@@ -21,9 +21,6 @@ public class PlayerInventory : MonoBehaviour
         {
             Debug.Log("[Vice] ItemDatabase loaded successfully.");
         }
-
-        AddItem("Cannabis Seed", 5);
-        AddItem("Pot", 1);
     }
 
     public void AddItem(string itemName, int quantity)
@@ -48,7 +45,7 @@ public class PlayerInventory : MonoBehaviour
         ItemData itemData = itemDatabase.GetItemByName(itemName);
         if (itemData != null)
         {
-            InventoryItem itemCopy = new InventoryItem(itemData.itemName, itemData.icon, itemData.description, quantity, itemData.price);
+            InventoryItem itemCopy = new InventoryItem(itemData.itemName, itemData.icon, itemData.description, quantity, itemData.price, itemData.sprite);
             inventory.Add(itemCopy);
             NotifyInventoryChanged();
             Debug.Log("[Vice] New item added: " + itemName);

@@ -7,4 +7,5 @@ public class ItemData
     public Sprite icon;
     public string description;
     public int price;
+    public Sprite sprite;
 }

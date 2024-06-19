@@ -8,12 +8,15 @@ public class ItemDatabase : ScriptableObject
 
     public ItemData GetItemByName(string itemName)
     {
-        foreach (ItemData item in items)
+        return items.Find(item => item.itemName == itemName);
+    }
+
+    public Sprite GetItemSprite(string itemName)
+    {
+        ItemData itemData = GetItemByName(itemName);
+        if (itemData != null)
         {
-            if (item.itemName == itemName)
-            {
-                return item;
-            }
+            return itemData.icon;
         }
         return null;
     }

@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using System;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class InventoryManager : MonoBehaviour
 
     private GameObject[] inventorySlots = new GameObject[30];
     private InventoryItem currentItemInHand;
+    private HUDManager hudManager;
 
     public InventoryItem CurrentItemInHand
     {
@@ -31,6 +33,13 @@ public class InventoryManager : MonoBehaviour
         InitializeInventoryUI();
         playerInventory.OnInventoryChanged += PopulateInventoryUI;
         inventoryPanel.gameObject.SetActive(false);
+
+        // Find and assign HUDManager
+        hudManager = FindObjectOfType<HUDManager>();
+        if (hudManager == null)
+        {
+            Debug.LogError("[Vice] HUDManager not found in the scene.");
+        }
     }
 
     void Update()
@@ -255,12 +264,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void PutItemInHand(InventoryItem item)
-    {
-        currentItemInHand = item;
-        UpdateInventorySlotUI(item); // Update inventory UI to indicate item is in hand
-    }
-
     public InventoryItem GetCurrentItemInHand()
     {
         return currentItemInHand;
@@ -268,7 +271,6 @@ public class InventoryManager : MonoBehaviour
 
     public void UseItemInHand()
     {
-
         InventoryItem itemInHand = currentItemInHand;
 
         if (itemInHand != null)
@@ -285,9 +287,7 @@ public class InventoryManager : MonoBehaviour
                 PlayerInteraction playerInteraction = FindObjectOfType<PlayerInteraction>();
                 if (playerInteraction != null)
                 {
-                    Debug.Log("[Vice] Vi är här?");
                     playerInteraction.PlacePotOnGround();
-
                 }
                 else
                 {
@@ -304,7 +304,6 @@ public class InventoryManager : MonoBehaviour
             Debug.Log("[Vice] No item in hand to use.");
         }
     }
-
 
     void PlantCannabisSeed()
     {
@@ -334,16 +333,36 @@ public class InventoryManager : MonoBehaviour
 
     public void OnSlotClicked(InventoryItem item)
     {
-        PutItemInHand(item); // Put clicked item in hand
-
-        // Debug information
-        if (currentItemInHand != null)
+        if (currentItemInHand == item)
         {
-            Debug.Log("[Vice] Item picked up: " + currentItemInHand.itemName);
+            CurrentItemInHand = null;
         }
         else
         {
-            Debug.Log("[Vice] No item picked up.");
+            PutItemInHand(item);
+            Debug.Log("[Vice] Item picked up: " + currentItemInHand.itemName);
+        }
+
+        // Update HUDManager UI
+        hudManager.UpdateItemInHandUI();
+    }
+
+    public void PutItemInHand(InventoryItem item)
+    {
+        currentItemInHand = item;
+        UpdateInventorySlotUI(item); // Update inventory UI to indicate item is in hand
+        hudManager.UpdateItemInHandUI(); // Update HUDManager UI
+    }
+
+    public Sprite GetItemInHandSprite()
+    {
+        if (currentItemInHand != null)
+        {
+            return currentItemInHand.icon; // Return the icon sprite of the item in hand
+        }
+        else
+        {
+            return null; // Or return a default sprite indicating no item in hand
         }
     }
 
