@@ -14,11 +14,11 @@ public class PlayerInterraction : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
-            playerInventory.AddItem("Cannabis", 1); // Add 1 Unpacked Cannabis Potion
+            playerInventory.AddItem("Cannabis", 1); // Add 1 Unpacked Cannabis
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            playerInventory.AddItem("Packed Cannabis", 2); // Add 2 Mana Potions
+            playerInventory.AddItem("Packed Cannabis", 2); // Add 2 Packed Cannabis
         }
         */
     }

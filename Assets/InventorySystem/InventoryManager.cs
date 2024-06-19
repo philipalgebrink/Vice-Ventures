@@ -28,7 +28,19 @@ public class InventoryManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             // Example of adding an item using the new method
-            playerInventory.AddItem("Cannabis Seed", 5);
+            playerInventory.AddItem("Cannabis Seed", 1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            // Example of adding an item using the new method
+            playerInventory.AddItem("Unpacked Cannabis", 1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            // Example of adding an item using the new method
+            playerInventory.AddItem("Packed Cannabis", 1);
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -53,8 +65,10 @@ public class InventoryManager : MonoBehaviour
         RectTransform panelRectTransform = inventoryPanel.GetComponent<RectTransform>();
 
         // Define slot size and padding (adjust these values as needed)
-        Vector2 slotSize = new Vector2(200f, 100f); // Example slot size
-        Vector2 slotPadding = new Vector2(2f, 2f); // Example padding between slots
+        Vector2 originalSlotSize = new Vector2(200f, 100f); // Original slot size
+        Vector2 slotSize = originalSlotSize * 1.5f; // Adjusted slot size for 1.5 scale
+        Vector2 originalSlotPadding = new Vector2(2f, 2f); // Original padding between slots
+        Vector2 slotPadding = originalSlotPadding * 1.5f; // Adjusted padding for 1.5 scale
 
         // Number of columns and rows for the grid (adjust as needed)
         int columns = 6; // Example: 6 columns
@@ -141,7 +155,8 @@ public class InventoryManager : MonoBehaviour
         TextMeshProUGUI nameText = slot.transform.Find("Name").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI descriptionText = slot.transform.Find("Description").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI quantityText = slot.transform.Find("Quantity").GetComponent<TextMeshProUGUI>();
-        Image iconImage = slot.transform.Find("Icon").GetComponent<Image>(); // Get the Icon image component
+        Image iconImage = slot.transform.Find("Icon").GetComponent<Image>();
+        Image circleImage = slot.transform.Find("Circle").GetComponent<Image>();
 
         if (item != null)
         {
@@ -156,13 +171,11 @@ public class InventoryManager : MonoBehaviour
                 color.a = 1f; // Set alpha to 1 (fully visible)
                 iconImage.color = color;
                 iconImage.enabled = true;
-            }
-            else
-            {
-                Color color = iconImage.color;
-                color.a = 0f; // Set alpha to 0 (invisible)
-                iconImage.color = color;
-                iconImage.enabled = false;
+
+                Color circleColor = circleImage.color;
+                circleColor.a = 1f;
+                circleImage.color = circleColor;
+                circleImage.enabled = true;
             }
         }
         else
