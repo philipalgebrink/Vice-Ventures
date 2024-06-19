@@ -1,21 +1,17 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class InventorySlot : MonoBehaviour, IPointerClickHandler
+public class InventorySlot : MonoBehaviour
 {
-    public InventoryItem item;
-    public InventoryManager inventoryManager;
+    public InventoryItem item; // Item stored in this slot
+    public InventoryManager inventoryManager; // Reference to the InventoryManager
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnSlotClick()
     {
-        if (item != null)
+        Debug.Log("[Vice] Clicked on inventory slot with item: " + item.itemName); // Debug statement to verify click
+
+        if (item != null && inventoryManager != null)
         {
-            inventoryManager.SpawnItem(item);
+            inventoryManager.PutItemInHand(item); // Call method in InventoryManager to put item in hand
         }
-    }
-
-    public void SetItem(InventoryItem newItem)
-    {
-        item = newItem;
     }
 }

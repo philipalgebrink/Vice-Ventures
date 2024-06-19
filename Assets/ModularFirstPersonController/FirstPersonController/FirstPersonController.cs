@@ -158,7 +158,7 @@ public class FirstPersonController : MonoBehaviour
 
         if (inventoryManager == null)
         {
-            Debug.LogError("InventoryManager not found in the scene!");
+            Debug.Log("[Vice] InventoryManager not found in the scene!");
         }
 
         if (lockCursor)

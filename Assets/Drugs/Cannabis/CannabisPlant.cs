@@ -11,7 +11,7 @@ public class CannabisPlant : MonoBehaviour
     {
         if (models == null || models.Length == 0)
         {
-            Debug.LogError("CannabisPlant: No plant models provided.");
+            Debug.LogError("[Vice] CannabisPlant: No plant models provided.");
             return;
         }
 
@@ -28,7 +28,7 @@ public class CannabisPlant : MonoBehaviour
         // Check if plantModels array is null or empty
         if (plantModels == null || plantModels.Length == 0)
         {
-            Debug.LogError("CannabisPlant: plantModels array is not initialized or empty.");
+            Debug.LogError("[Vice] CannabisPlant: plantModels array is not initialized or empty.");
             return;
         }
 
@@ -45,7 +45,7 @@ public class CannabisPlant : MonoBehaviour
         // Check if plantModels array is null or empty
         if (plantModels == null || plantModels.Length == 0)
         {
-            Debug.LogError("CannabisPlant: plantModels array is not initialized or empty.");
+            Debug.LogError("[Vice] CannabisPlant: plantModels array is not initialized or empty.");
             return;
         }
 
@@ -59,7 +59,7 @@ public class CannabisPlant : MonoBehaviour
         // Check if plantModels array is null or empty
         if (plantModels == null || plantModels.Length == 0)
         {
-            Debug.LogError("CannabisPlant: plantModels array is not initialized or empty.");
+            Debug.LogError("[Vice] CannabisPlant: plantModels array is not initialized or empty.");
             return;
         }
 

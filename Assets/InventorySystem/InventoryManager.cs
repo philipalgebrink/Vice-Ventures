@@ -1,36 +1,48 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 public class InventoryManager : MonoBehaviour
 {
-    public GameObject inventorySlotPrefab; // Drag your InventorySlot prefab here in the Inspector
-    public Transform inventoryPanel; // Drag your Inventory Panel here in the Inspector
-    public PlayerInventory playerInventory; // Reference to your PlayerInventory script
-    public GameObject player; // Reference to the player
-
-    private GameObject[] inventorySlots = new GameObject[30]; // Array to hold all inventory slots
-    public bool isInventoryOpen = false;
+    public GameObject inventorySlotPrefab;
+    public Transform inventoryPanel;
+    public PlayerInventory playerInventory;
+    public GameObject player;
     public GameObject crosshairObject;
+
+    private GameObject[] inventorySlots = new GameObject[30];
+    private InventoryItem currentItemInHand;
+
+    public InventoryItem CurrentItemInHand
+    {
+        get { return currentItemInHand; }
+        set { currentItemInHand = value; }
+    }
+    public bool isInventoryOpen = false;
+
+    public event Action OnInventoryUIChanged; // Event to notify UI changes
 
     void Start()
     {
         Cursor.visible = false;
-
-        CreateInventorySlots(); // Create all inventory slots initially
-        InitializeInventoryUI(); // Initialize all slots to the correct state
-        playerInventory.OnInventoryChanged += PopulateInventoryUI; // Subscribe to inventory changes
-        inventoryPanel.gameObject.SetActive(false); // Initially hide inventory panel
+        CreateInventorySlots();
+        InitializeInventoryUI();
+        playerInventory.OnInventoryChanged += PopulateInventoryUI;
+        inventoryPanel.gameObject.SetActive(false);
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
+            Debug.Log("[Vice] Are we adding cannabis seed?");
             playerInventory.AddItem("Cannabis Seed", 5);
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
+            Debug.Log("[Vice] Are we adding pot?");
             playerInventory.AddItem("Pot", 5);
         }
 
@@ -39,7 +51,6 @@ public class InventoryManager : MonoBehaviour
             ToggleInventoryPanel();
         }
 
-        // Lock cursor position when inventory panel is open
         if (isInventoryOpen)
         {
             Cursor.lockState = CursorLockMode.Confined;
@@ -54,13 +65,13 @@ public class InventoryManager : MonoBehaviour
     {
         RectTransform panelRectTransform = inventoryPanel.GetComponent<RectTransform>();
 
-        Vector2 originalSlotSize = new Vector2(200f, 100f); // Original slot size
-        Vector2 slotSize = originalSlotSize * 1.5f; // Adjusted slot size for 1.5 scale
-        Vector2 originalSlotPadding = new Vector2(2f, 2f); // Original padding between slots
-        Vector2 slotPadding = originalSlotPadding * 1.5f; // Adjusted padding for 1.5 scale
+        Vector2 originalSlotSize = new Vector2(200f, 100f);
+        Vector2 slotSize = originalSlotSize * 1.5f;
+        Vector2 originalSlotPadding = new Vector2(2f, 2f);
+        Vector2 slotPadding = originalSlotPadding * 1.5f;
 
-        int columns = 6; // Example: 6 columns
-        int rows = 5; // Example: 5 rows
+        int columns = 6;
+        int rows = 5;
 
         float gridWidth = columns * (slotSize.x + slotPadding.x) - slotPadding.x;
         float gridHeight = rows * (slotSize.y + slotPadding.y) - slotPadding.y;
@@ -88,7 +99,7 @@ public class InventoryManager : MonoBehaviour
             Image iconImage = slot.transform.Find("Icon").GetComponent<Image>();
             if (iconImage == null)
             {
-                Debug.LogError("Icon Image component not found in slot prefab.");
+                Debug.LogError("[Vice] Icon Image component not found in slot prefab.");
             }
             Color color = iconImage.color;
             color.a = 0f;
@@ -97,9 +108,10 @@ public class InventoryManager : MonoBehaviour
             InventorySlot inventorySlot = slot.GetComponent<InventorySlot>();
             if (inventorySlot == null)
             {
-                Debug.LogError("InventorySlot component not found in slot prefab.");
+                Debug.LogError("[Vice] InventorySlot component not found in slot prefab.");
+                return;
             }
-            inventorySlot.inventoryManager = this; // Set the InventoryManager reference dynamically
+            inventorySlot.inventoryManager = this;
 
             inventorySlots[i] = slot;
         }
@@ -140,30 +152,30 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        Debug.Log("Inventory is full!"); // Handle case where inventory is full
+        Debug.Log("[Vice] Inventory is full!");
     }
 
     void UpdateInventorySlot(int slotIndex, InventoryItem item)
     {
         GameObject slot = inventorySlots[slotIndex];
-        slot.SetActive(true); // Activate the slot
+        slot.SetActive(true);
 
         TextMeshProUGUI nameText = slot.transform.Find("Name").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI descriptionText = slot.transform.Find("Description").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI quantityText = slot.transform.Find("Quantity").GetComponent<TextMeshProUGUI>();
-        Image iconImage = slot.transform.Find("Icon").GetComponent<Image>(); // Get the Icon image component
-        Image circleImage = slot.transform.Find("Circle").GetComponent<Image>(); // Get the Circle image component
+        Image iconImage = slot.transform.Find("Icon").GetComponent<Image>();
+        Image circleImage = slot.transform.Find("Circle").GetComponent<Image>();
 
         if (nameText == null || descriptionText == null || quantityText == null || iconImage == null || circleImage == null)
         {
-            Debug.LogError("One or more UI components are missing in the slot prefab.");
+            Debug.LogError("[Vice] One or more UI components are missing in the slot prefab.");
             return;
         }
 
         InventorySlot inventorySlot = slot.GetComponent<InventorySlot>();
         if (inventorySlot == null)
         {
-            Debug.LogError("InventorySlot component not found in slot prefab.");
+            Debug.LogError("[Vice] InventorySlot component not found in slot prefab.");
             return;
         }
         inventorySlot.item = item;
@@ -178,11 +190,10 @@ public class InventoryManager : MonoBehaviour
             {
                 iconImage.sprite = item.icon;
                 Color color = iconImage.color;
-                color.a = 1f; // Set alpha to 1 (fully visible)
+                color.a = 1f;
                 iconImage.color = color;
                 iconImage.enabled = true;
 
-                // Set Circle alpha to 1
                 Color circleColor = circleImage.color;
                 circleColor.a = 1f;
                 circleImage.color = circleColor;
@@ -191,16 +202,28 @@ public class InventoryManager : MonoBehaviour
             else
             {
                 Color color = iconImage.color;
-                color.a = 0f; // Set alpha to 0 (invisible)
+                color.a = 0f;
                 iconImage.color = color;
                 iconImage.enabled = false;
 
-                // Set Circle alpha to 0
                 Color circleColor = circleImage.color;
                 circleColor.a = 0f;
                 circleImage.color = circleColor;
                 circleImage.enabled = false;
             }
+
+            EventTrigger eventTrigger = iconImage.gameObject.GetComponent<EventTrigger>();
+            if (eventTrigger == null)
+            {
+                eventTrigger = iconImage.gameObject.AddComponent<EventTrigger>();
+            }
+
+            eventTrigger.triggers.Clear();
+
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerClick;
+            entry.callback.AddListener((data) => { OnSlotClicked(item); });
+            eventTrigger.triggers.Add(entry);
         }
         else
         {
@@ -208,11 +231,10 @@ public class InventoryManager : MonoBehaviour
             descriptionText.text = "";
             quantityText.text = "";
             Color color = iconImage.color;
-            color.a = 0f; // Set alpha to 0 (invisible)
+            color.a = 0f;
             iconImage.color = color;
             iconImage.enabled = false;
 
-            // Set Circle alpha to 0
             Color circleColor = circleImage.color;
             circleColor.a = 0f;
             circleImage.color = circleColor;
@@ -233,22 +255,101 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void SpawnItem(InventoryItem item)
+    public void PutItemInHand(InventoryItem item)
     {
-        string prefabPath = "Items/" + item.itemName; // Assuming prefab names match item names including spaces
-        GameObject itemPrefab = Resources.Load<GameObject>(prefabPath);
+        currentItemInHand = item;
+        UpdateInventorySlotUI(item); // Update inventory UI to indicate item is in hand
+    }
 
-        if (itemPrefab != null)
+    public InventoryItem GetCurrentItemInHand()
+    {
+        return currentItemInHand;
+    }
+
+    public void UseItemInHand()
+    {
+
+        InventoryItem itemInHand = currentItemInHand;
+
+        if (itemInHand != null)
         {
-            Vector3 spawnPosition = player.transform.position + player.transform.forward * 2f; // Spawn 2 units in front of the player
-            Instantiate(itemPrefab, spawnPosition, Quaternion.identity);
+            Debug.Log("[Vice] Attempting to use item in hand: " + itemInHand.itemName);
 
-            // Reduce the quantity of the item in the inventory
-            playerInventory.RemoveItem(item.itemName, 1);
+            if (itemInHand.itemName == "Cannabis Seed")
+            {
+                PlantCannabisSeed(); // Call PlantCannabisSeed when using Cannabis Seed
+            }
+            else if (itemInHand.itemName == "Pot")
+            {
+                // Call PlacePotOnGround from PlayerInteraction
+                PlayerInteraction playerInteraction = FindObjectOfType<PlayerInteraction>();
+                if (playerInteraction != null)
+                {
+                    Debug.Log("[Vice] Vi är här?");
+                    playerInteraction.PlacePotOnGround();
+
+                }
+                else
+                {
+                    Debug.Log("[Vice] PlayerInteraction script not found.");
+                }
+            }
+            else
+            {
+                Debug.Log("[Vice] No specific action defined for item: " + itemInHand.itemName);
+            }
         }
         else
         {
-            Debug.LogWarning("Prefab not found for item: " + item.itemName + " at path: " + prefabPath);
+            Debug.Log("[Vice] No item in hand to use.");
         }
+    }
+
+
+    void PlantCannabisSeed()
+    {
+        Vector3 plantPosition = CalculatePlantPosition(); // Calculate where to plant
+        GameObject cannabisPlantPrefab = Resources.Load<GameObject>("Items/CannabisPlant"); // Load plant prefab
+
+        if (cannabisPlantPrefab != null)
+        {
+            Instantiate(cannabisPlantPrefab, plantPosition, Quaternion.identity);
+            Debug.Log("[Vice] Cannabis seed planted at position: " + plantPosition);
+
+            playerInventory.RemoveItem(currentItemInHand.itemName, 1); // Remove seed from inventory
+            PopulateInventoryUI(); // Update UI
+            currentItemInHand = null; // Clear item from hand
+            OnInventoryUIChanged?.Invoke(); // Notify UI change event
+        }
+        else
+        {
+            Debug.Log("[Vice] Cannabis plant prefab not found.");
+        }
+    }
+
+    Vector3 CalculatePlantPosition()
+    {
+        return player.transform.position + player.transform.forward * 2f; // Example: calculate position based on player's position
+    }
+
+    public void OnSlotClicked(InventoryItem item)
+    {
+        PutItemInHand(item); // Put clicked item in hand
+
+        // Debug information
+        if (currentItemInHand != null)
+        {
+            Debug.Log("[Vice] Item picked up: " + currentItemInHand.itemName);
+        }
+        else
+        {
+            Debug.Log("[Vice] No item picked up.");
+        }
+    }
+
+    void UpdateInventorySlotUI(InventoryItem item)
+    {
+        // Implement logic to visually update the inventory slot UI when item is in hand
+        // This can include highlighting or changing the appearance of the UI element
     }
 }

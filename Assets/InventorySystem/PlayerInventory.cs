@@ -4,24 +4,26 @@ using System.Collections.Generic;
 
 public class PlayerInventory : MonoBehaviour
 {
-    public event Action OnInventoryChanged; // Event to notify when inventory changes
-
     private int maxSize = 30;
     public List<InventoryItem> inventory = new List<InventoryItem>();
-
-    private ItemDatabase itemDatabase;
+    public event System.Action OnInventoryChanged;
+    private InventoryItem itemInHand; // Track the item currently in hand
+    public ItemDatabase itemDatabase;
 
     void Start()
     {
         itemDatabase = Resources.Load<ItemDatabase>("ItemDatabase");
         if (itemDatabase == null)
         {
-            Debug.LogError("ItemDatabase not found in Resources folder.");
+            Debug.Log("[Vice] ItemDatabase not found in Resources folder.");
         }
         else
         {
-            Debug.Log("ItemDatabase loaded successfully.");
+            Debug.Log("[Vice] ItemDatabase loaded successfully.");
         }
+
+        AddItem("Cannabis Seed", 5);
+        AddItem("Pot", 1);
     }
 
     public void AddItem(string itemName, int quantity)
@@ -30,15 +32,15 @@ public class PlayerInventory : MonoBehaviour
         if (existingItem != null)
         {
             existingItem.quantity += quantity; // Increase quantity if already exists
-            NotifyInventoryChanged(); // Notify UI of change
-            Debug.Log("Item quantity updated: " + itemName);
+            NotifyInventoryChanged();
+            Debug.Log("[Vice] Item quantity updated: " + itemName);
             return;
         }
 
         if (inventory.Count >= maxSize)
         {
             // Inventory full handling
-            Debug.LogWarning("Inventory is full.");
+            Debug.Log("[Vice] Inventory is full.");
             return;
         }
 
@@ -48,12 +50,12 @@ public class PlayerInventory : MonoBehaviour
         {
             InventoryItem itemCopy = new InventoryItem(itemData.itemName, itemData.icon, itemData.description, quantity, itemData.price);
             inventory.Add(itemCopy);
-            NotifyInventoryChanged(); // Notify UI of change
-            Debug.Log("New item added: " + itemName);
+            NotifyInventoryChanged();
+            Debug.Log("[Vice] New item added: " + itemName);
         }
         else
         {
-            Debug.LogWarning("Item not found in ItemDatabase: " + itemName);
+            Debug.Log("[Vice] Item not found in ItemDatabase: " + itemName);
         }
     }
 
@@ -66,28 +68,24 @@ public class PlayerInventory : MonoBehaviour
             if (item.quantity <= 0)
             {
                 inventory.Remove(item);
-                Debug.Log("Item removed: " + itemName);
+                Debug.Log("[Vice] Item removed: " + itemName);
             }
             else
             {
-                Debug.Log("Item quantity reduced: " + itemName + ", new quantity: " + item.quantity);
+                Debug.Log("[Vice] Item quantity reduced: " + itemName + ", new quantity: " + item.quantity);
             }
-            NotifyInventoryChanged(); // Notify UI of change
+            NotifyInventoryChanged();
         }
         else
         {
-            Debug.LogWarning("Item not found in inventory: " + itemName);
+            Debug.Log("[Vice] Item not found in inventory: " + itemName);
         }
     }
 
-    // Method to check if the player has a specific item
-    public bool HasItem(string itemName)
-    {
-        return inventory.Exists(item => item.itemName == itemName);
-    }
 
-    private void NotifyInventoryChanged()
+    public void NotifyInventoryChanged()
     {
-        OnInventoryChanged?.Invoke(); // Invoke the event if there are subscribers
+        Debug.Log("[Vice] Inventory changed notification sent.");
+        OnInventoryChanged?.Invoke();
     }
 }
