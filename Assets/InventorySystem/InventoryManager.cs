@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI; // Make sure to include this for Image
 
 public class InventoryManager : MonoBehaviour
 {
@@ -23,6 +24,35 @@ public class InventoryManager : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            // Load the sprite from the Resources folder
+            Sprite seedIcon = Resources.Load<Sprite>("Drugs/Icons/Seed");
+            if (seedIcon != null)
+            {
+                playerInventory.AddItem(new InventoryItem("Cannabis Seed", seedIcon, "A cannabis seed", 1, 20));
+            }
+            else
+            {
+                Debug.LogWarning("Seed icon not found in Resources/Drugs/Icons/");
+                playerInventory.AddItem(new InventoryItem("Cannabis Seed", "A cannabis seed", 1, 20));
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            // Load the sprite from the Resources folder
+            Sprite seedIcon = Resources.Load<Sprite>("Drugs/Icons/Seed");
+            if (seedIcon != null)
+            {
+                playerInventory.AddItem(new InventoryItem("Cannabis Seed", seedIcon, "A cannabis seed", 5, 20));
+            }
+            else
+            {
+                Debug.LogWarning("Seed icon not found in Resources/Drugs/Icons/");
+                playerInventory.AddItem(new InventoryItem("Cannabis Seed", "A cannabis seed", 1, 20));
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleInventoryPanel();
@@ -120,11 +150,22 @@ public class InventoryManager : MonoBehaviour
         TextMeshProUGUI nameText = slot.transform.Find("Name").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI descriptionText = slot.transform.Find("Description").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI quantityText = slot.transform.Find("Quantity").GetComponent<TextMeshProUGUI>();
+        Image iconImage = slot.transform.Find("Icon").GetComponent<Image>(); // Get the Icon image component
 
         nameText.text = item.itemName;
         descriptionText.text = item.description;
         quantityText.text = item.quantity.ToString();
+
+        if (item.icon != null)
+        {
+            iconImage.sprite = item.icon;
+            Color color = iconImage.color;
+            color.a = 1f; // Set alpha to 1 (fully visible)
+            iconImage.color = color;
+        }
     }
+
+
 
     void ToggleInventoryPanel()
     {

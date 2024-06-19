@@ -8,15 +8,6 @@ public class PlayerInteraction : MonoBehaviour
     void Update()
     {
 
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            playerInventory.AddItem(new InventoryItem("Test", "Testest", 2, 10));
-        }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            playerInventory.AddItem(new InventoryItem("Test2", "Testest2", 5, 20));
-        }
         if (Input.GetKeyDown(KeyCode.Y))
         {
             playerInventory.AddItem(new InventoryItem("Test3", "Testest3", 5, 20));

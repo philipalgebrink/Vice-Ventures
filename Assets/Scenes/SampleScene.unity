@@ -350,10 +350,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cannabisPlantPrefab: {fileID: 1177651798383944081, guid: 14b25bcb4464a6a47b4f4ac017d7a855, type: 3}
   plantModels:
-  - {fileID: 520172299238748589, guid: 66460ef312704ed4781b11988d4cb1d8, type: 3}
-  - {fileID: 7537854006659813432, guid: 7aeaa2beee7764e46b2abb74d0ef234d, type: 3}
-  - {fileID: 3220273856077775952, guid: a096b8aa18873f247bb90c9533ae81b9, type: 3}
-  modelChangeInterval: 120
+  - {fileID: 7971463499149406633, guid: 313ba68ef567002468003da04217e147, type: 3}
+  - {fileID: 1778570062613886887, guid: e9821644d7fe9af4c94393cd7933340e, type: 3}
+  - {fileID: 7560455900078552164, guid: aed898e2c1da04c4799ebf019a724de0, type: 3}
+  - {fileID: 2260869450483392895, guid: c165e8a40ddcc144e99686743148e248, type: 3}
+  - {fileID: 3989572579767640419, guid: f5ff30e3abe3d92468d46cee2cb41b4c, type: 3}
+  modelChangeInterval: 5
 --- !u!114 &393232979
 MonoBehaviour:
   m_ObjectHideFlags: 0
