@@ -17,15 +17,39 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 0059ee3c037c45d4c942c385087a46bd, type: 3}
     description: You should plant this.
     price: 20
+    sprite: {fileID: 21300000, guid: 0059ee3c037c45d4c942c385087a46bd, type: 3}
   - itemName: Unpacked Cannabis
     icon: {fileID: 21300000, guid: a28a9da9c33c7fe4395a8cf45f82e98d, type: 3}
     description: You should pack this.
     price: 60
+    sprite: {fileID: 21300000, guid: a28a9da9c33c7fe4395a8cf45f82e98d, type: 3}
   - itemName: Packed Cannabis
     icon: {fileID: 21300000, guid: c5b30b9897e54c3418e24b8d4dcfd444, type: 3}
     description: You should sell this.
     price: 220
+    sprite: {fileID: 21300000, guid: c5b30b9897e54c3418e24b8d4dcfd444, type: 3}
   - itemName: Pot
     icon: {fileID: 21300000, guid: 32a62b568adb2d14fa5f0867bf90be84, type: 3}
     description: You should use this to grow something.
     price: 20
+    sprite: {fileID: 21300000, guid: 32a62b568adb2d14fa5f0867bf90be84, type: 3}
+  - itemName: Water
+    icon: {fileID: 21300000, guid: fc6476d89580058409fe01bf0521e984, type: 3}
+    description: You should drink this.. Or whatever..
+    price: 10
+    sprite: {fileID: 21300000, guid: fc6476d89580058409fe01bf0521e984, type: 3}
+  - itemName: PlantVital
+    icon: {fileID: 21300000, guid: 7ef2ec563ddc8af46885c7f81cf7a062, type: 3}
+    description: You should feed your plants with this.
+    price: 15
+    sprite: {fileID: 21300000, guid: 7ef2ec563ddc8af46885c7f81cf7a062, type: 3}
+  - itemName: UV Light
+    icon: {fileID: 21300000, guid: ae88552cb1e1d1a44a77f2c062a40c12, type: 3}
+    description: You should use this for mood.. Or whatever..
+    price: 50
+    sprite: {fileID: 21300000, guid: ae88552cb1e1d1a44a77f2c062a40c12, type: 3}
+  - itemName: Scissors
+    icon: {fileID: 21300000, guid: 4387160ee0cfd5d4ab59c574699efe30, type: 3}
+    description: You should use this to cut something.
+    price: 10
+    sprite: {fileID: 21300000, guid: 4387160ee0cfd5d4ab59c574699efe30, type: 3}

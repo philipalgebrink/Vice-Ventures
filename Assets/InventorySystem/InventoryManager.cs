@@ -24,7 +24,9 @@ public class InventoryManager : MonoBehaviour
     }
     public bool isInventoryOpen = false;
 
-    public event Action OnInventoryUIChanged; // Event to notify UI changes
+    public event Action OnInventoryUIChanged;
+
+    private CannabisPlant cannabisPlant;
 
     void Start()
     {
@@ -40,6 +42,9 @@ public class InventoryManager : MonoBehaviour
         {
             Debug.LogError("[Vice] HUDManager not found in the scene.");
         }
+
+        // Assuming CannabisPlant script is on the same GameObject
+        cannabisPlant = GetComponent<CannabisPlant>();
     }
 
     void Update()
@@ -53,6 +58,27 @@ public class InventoryManager : MonoBehaviour
         {
             Debug.Log("[Vice] Are we adding pot?");
             playerInventory.AddItem("Pot", 5);
+        }
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            Debug.Log("[Vice] Are we adding water?");
+            playerInventory.AddItem("Water", 5);
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            Debug.Log("[Vice] Are we adding plantvital?");
+            playerInventory.AddItem("PlantVital", 5);
+        }
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Debug.Log("[Vice] Are we adding UV Light?");
+            playerInventory.AddItem("UV Light", 1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            Debug.Log("[Vice] Are we adding Scissors?");
+            playerInventory.AddItem("Scissors", 1);
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -282,6 +308,33 @@ public class InventoryManager : MonoBehaviour
                 Debug.Log("Knows I have seed in hand");
                 PlantCannabisSeed(); // Call PlantCannabisSeed when using Cannabis Seed
             }
+            else if (itemInHand.itemName == "Water")
+            {
+                // Call water plant
+                WaterPlant();
+            }
+            else if (itemInHand.itemName == "PlantVital")
+            {
+                // Call feed plant
+                FeedPlant();
+            }
+            else if (itemInHand.itemName == "Scissors")
+            {
+                // Call feed plant
+                HarvestCannabis();
+            }
+            else if (itemInHand.itemName == "UV Light")
+            {
+                PlayerInteraction playerInteraction = FindObjectOfType<PlayerInteraction>();
+                if (playerInteraction != null)
+                {
+                    playerInteraction.PlaceUVLight();
+                }
+                else
+                {
+                    Debug.Log("[Vice] PlayerInteraction script not found.");
+                }
+            }
             else if (itemInHand.itemName == "Pot")
             {
                 // Call PlacePotOnGround from PlayerInteraction
@@ -308,6 +361,7 @@ public class InventoryManager : MonoBehaviour
 
     void PlantCannabisSeed()
     {
+        Debug.Log("Inventorymanager cannabisseed");
         // Raycast from the center of the screen (where crosshair is)
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
         RaycastHit hit;
@@ -355,7 +409,158 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    void WaterPlant()
+    {
+        // Raycast from the center of the screen (where crosshair is)
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
+        RaycastHit hit;
 
+        if (Physics.Raycast(ray, out hit))
+        {
+            // Check if the hit object has the "CannabisPlant" tag
+            if (hit.collider.CompareTag("CannabisPlant"))
+            {
+                // Get the CannabisPlant component from the hit object
+                CannabisPlant plant = hit.collider.GetComponent<CannabisPlant>();
+
+                if (plant != null)
+                {
+                    // Increase water level of the specific cannabis plant
+                    plant.WaterLevel += 20f;
+
+                    // Remove water from inventory and update UI
+                    playerInventory.RemoveItem(currentItemInHand.itemName, 1);
+                    PopulateInventoryUI();
+                    if (currentItemInHand.quantity == 0)
+                    {
+                        currentItemInHand = null;
+                    }
+                    OnInventoryUIChanged?.Invoke();
+                }
+                else
+                {
+                    Debug.LogError("[Vice] CannabisPlant component not found on hit object.");
+                }
+            }
+            else
+            {
+                Debug.LogError("[Vice] Object hit is not tagged as 'CannabisPlant'.");
+            }
+        }
+        else
+        {
+            Debug.LogError("[Vice] No valid object hit detected.");
+        }
+    }
+
+    void FeedPlant()
+    {
+        // Raycast from the center of the screen (where crosshair is)
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            // Check if the hit object has the "CannabisPlant" tag
+            if (hit.collider.CompareTag("CannabisPlant"))
+            {
+                // Get the CannabisPlant component from the hit object
+                CannabisPlant plant = hit.collider.GetComponent<CannabisPlant>();
+
+                if (plant != null)
+                {
+                    // Increase food level of the specific cannabis plant
+                    plant.FoodLevel += 15f;
+
+                    // Remove plant vital from inventory and update UI
+                    playerInventory.RemoveItem(currentItemInHand.itemName, 1);
+                    PopulateInventoryUI();
+                    if (currentItemInHand.quantity == 0)
+                    {
+                        currentItemInHand = null;
+                    }
+                    OnInventoryUIChanged?.Invoke();
+                }
+                else
+                {
+                    Debug.LogError("[Vice] CannabisPlant component not found on hit object.");
+                }
+            }
+            else
+            {
+                Debug.LogError("[Vice] Object hit is not tagged as 'CannabisPlant'.");
+            }
+        }
+        else
+        {
+            Debug.LogError("[Vice] No valid object hit detected.");
+        }
+    }
+
+    void HarvestCannabis()
+    {
+        // Raycast from the center of the screen (where the crosshair is)
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            // Check if the hit object has the "CannabisPlant" tag
+            if (hit.collider.CompareTag("CannabisPlant"))
+            {
+                // Get the CannabisPlant component from the hit object
+                CannabisPlant plant = hit.collider.GetComponent<CannabisPlant>();
+                Debug.Log("modelIndex: " + plant.currentModelIndex);
+                if (plant != null && plant.currentModelIndex == 4)
+                {
+                    // Get the position and rotation of the cannabis plant
+                    Vector3 plantPosition = plant.transform.position;
+                    Quaternion plantRotation = plant.transform.rotation;
+
+                    // Load and instantiate the pot prefab
+                    GameObject potPrefab = Resources.Load<GameObject>("Items/Pot");
+                    if (potPrefab != null)
+                    {
+                        // Instantiate the pot prefab at the cannabis plant's position and rotation
+                        GameObject newPot = Instantiate(potPrefab, plantPosition, plantRotation);
+
+                        // Add a collider and set it as a trigger
+                        BoxCollider collider = newPot.AddComponent<BoxCollider>();
+                        collider.isTrigger = true;
+
+                        // Set the tag to "Pot"
+                        newPot.tag = "Pot";
+
+                        Debug.Log("[Vice] Cannabis harvested and turned back into pot.");
+
+                        // Add "Unpacked Cannabis" to the player's inventory
+                        playerInventory.AddItem("Unpacked Cannabis", 1);
+                        PopulateInventoryUI();
+                        OnInventoryUIChanged?.Invoke();
+
+                        // Remove the cannabis plant (this object) from the scene
+                        Destroy(hit.collider.gameObject);
+                    }
+                    else
+                    {
+                        Debug.Log("[Vice] Pot prefab not found.");
+                    }
+                }
+                else
+                {
+                    Debug.Log("[Vice] Cannabis plant is not fully grown or component not found.");
+                }
+            }
+            else
+            {
+                Debug.LogError("[Vice] Object hit is not tagged as 'CannabisPlant'.");
+            }
+        }
+        else
+        {
+            Debug.LogError("[Vice] No valid object hit detected.");
+        }
+    }
 
     public void OnSlotClicked(InventoryItem item)
     {
