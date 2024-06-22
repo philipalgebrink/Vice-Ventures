@@ -33,6 +33,13 @@ public class InventoryManager : MonoBehaviour
         Cursor.visible = false;
         CreateInventorySlots();
         InitializeInventoryUI();
+
+        if (playerInventory == null)
+        {
+            Debug.LogError("[Vice] PlayerInventory is not assigned.");
+            return;
+        }
+
         playerInventory.OnInventoryChanged += PopulateInventoryUI;
         inventoryPanel.gameObject.SetActive(false);
 
@@ -45,6 +52,10 @@ public class InventoryManager : MonoBehaviour
 
         // Assuming CannabisPlant script is on the same GameObject
         cannabisPlant = GetComponent<CannabisPlant>();
+        if (cannabisPlant == null)
+        {
+            Debug.LogWarning("[Vice] CannabisPlant script not found on this GameObject. If not needed, you can ignore this warning.");
+        }
     }
 
     void Update()
@@ -162,6 +173,12 @@ public class InventoryManager : MonoBehaviour
 
     void PopulateInventoryUI()
     {
+        if (playerInventory == null)
+        {
+            Debug.LogError("[Vice] PlayerInventory is not assigned.");
+            return;
+        }
+
         for (int i = 0; i < inventorySlots.Length; i++)
         {
             if (i < playerInventory.inventory.Count)

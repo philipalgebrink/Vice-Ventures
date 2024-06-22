@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 using System.Collections.Generic;
 
 public class PlayerInventory : MonoBehaviour
@@ -12,10 +11,15 @@ public class PlayerInventory : MonoBehaviour
 
     void Start()
     {
+        LoadItemDatabase();
+    }
+
+    void LoadItemDatabase()
+    {
         itemDatabase = Resources.Load<ItemDatabase>("ItemDatabase");
         if (itemDatabase == null)
         {
-            Debug.Log("[Vice] ItemDatabase not found in Resources folder.");
+            Debug.LogError("[Vice] ItemDatabase not found in Resources folder.");
         }
         else
         {
@@ -25,6 +29,12 @@ public class PlayerInventory : MonoBehaviour
 
     public void AddItem(string itemName, int quantity)
     {
+        if (itemDatabase == null)
+        {
+            Debug.LogError("[Vice] ItemDatabase is not loaded.");
+            return;
+        }
+
         InventoryItem existingItem = inventory.Find(i => i.itemName == itemName);
         if (existingItem != null)
         {
@@ -52,7 +62,7 @@ public class PlayerInventory : MonoBehaviour
         }
         else
         {
-            Debug.Log("[Vice] Item not found in ItemDatabase: " + itemName);
+            Debug.LogError("[Vice] Item not found in ItemDatabase: " + itemName);
         }
     }
 
@@ -75,10 +85,9 @@ public class PlayerInventory : MonoBehaviour
         }
         else
         {
-            Debug.Log("[Vice] Item not found in inventory: " + itemName);
+            Debug.LogError("[Vice] Item not found in inventory: " + itemName);
         }
     }
-
 
     public void NotifyInventoryChanged()
     {
