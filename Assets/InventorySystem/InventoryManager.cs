@@ -49,13 +49,6 @@ public class InventoryManager : MonoBehaviour
         {
             Debug.LogError("[Vice] HUDManager not found in the scene.");
         }
-
-        // Assuming CannabisPlant script is on the same GameObject
-        cannabisPlant = GetComponent<CannabisPlant>();
-        if (cannabisPlant == null)
-        {
-            Debug.LogWarning("[Vice] CannabisPlant script not found on this GameObject. If not needed, you can ignore this warning.");
-        }
     }
 
     void Update()
@@ -90,6 +83,12 @@ public class InventoryManager : MonoBehaviour
         {
             Debug.Log("[Vice] Are we adding Scissors?");
             playerInventory.AddItem("Scissors", 1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log("[Vice] Are we adding UV Light?");
+            playerInventory.AddItem("Packed Cannabis", 1);
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))

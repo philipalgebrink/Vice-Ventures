@@ -5,6 +5,7 @@ public class CannabisPlant : MonoBehaviour
     [SerializeField] private float modelChangeInterval = 30f; // Interval between model changes
     [SerializeField] private float nutrientUpdateTime = 10f; // Interval between food/water level changes
     [SerializeField] private float lightLevelUpdateTime = 5f; // Interval between light level changes
+    [SerializeField] public float lightLevel = 100f; // Light Level
     [SerializeField] public float WaterLevel = 35f; // Water Level
     [SerializeField] public float FoodLevel = 35f; // Food Level
     [SerializeField] private GameObject[] plantModels; // Array to hold different plant models
@@ -17,7 +18,6 @@ public class CannabisPlant : MonoBehaviour
     private float nextNutrientUpdateTime;
     private float nextLightLevelUpdateTime;
     private bool isHealthy = true; // Flag to track plant health
-    private float lightLevel = 100f; // Light Level
     private bool isLightNearby = false; // Flag to check if UV light is nearby
 
     // Inventory and UI references
