@@ -46,7 +46,7 @@ public class CannabisPlant : MonoBehaviour
         }
 
         // Check nutrient levels
-        if (WaterLevel <= 0 || FoodLevel <= 0)
+        if (WaterLevel <= 0 || FoodLevel <= 0 || WaterLevel >= 150 || FoodLevel >= 135)
         {
             isHealthy = false;
             SetPlantColor(unhealthyColor);
