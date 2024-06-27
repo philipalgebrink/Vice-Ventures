@@ -4,7 +4,7 @@ using TMPro;
 public class PlayerStats : MonoBehaviour
 {
     // Money variables
-    public int money = 1000;
+    public float money = 1000;
     public TMP_Text moneyTextMesh;
 
     // Health variables

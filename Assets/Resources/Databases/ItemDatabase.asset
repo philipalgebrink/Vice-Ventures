@@ -53,3 +53,8 @@ MonoBehaviour:
     description: You should sell this.
     price: 140
     sprite: {fileID: 21300000, guid: c5b30b9897e54c3418e24b8d4dcfd444, type: 3}
+  - itemName: Empty Zipbag
+    icon: {fileID: 21300000, guid: b9be4f8d85f423c41967ad73e895fefe, type: 3}
+    description: You should put something in this.
+    price: 10
+    sprite: {fileID: 21300000, guid: b9be4f8d85f423c41967ad73e895fefe, type: 3}
