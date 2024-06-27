@@ -68,8 +68,8 @@ public class InventoryManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.U))
         {
-            Debug.Log("[Vice] Are we adding plantvital?");
-            playerInventory.AddItem("PlantVital", 5);
+            Debug.Log("[Vice] Are we adding Unpacked Cannabis?");
+            playerInventory.AddItem("Unpacked Cannabis", 5);
         }
         if (Input.GetKeyDown(KeyCode.I))
         {
@@ -85,8 +85,8 @@ public class InventoryManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            Debug.Log("[Vice] Are we adding Packed Cannabis?");
-            playerInventory.AddItem("Packed Cannabis", 1);
+            Debug.Log("[Vice] Are we adding Empty Zipbag?");
+            playerInventory.AddItem("Empty Zipbag", 1);
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))

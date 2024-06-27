@@ -59,10 +59,12 @@ public class PlayerInteraction : MonoBehaviour
             Interactable interactable = hit.collider.GetComponent<Interactable>();
             if (interactable != null)
             {
+                Debug.Log($"[Vice] Interacting with: {hit.collider.gameObject.name}");
                 interactable.Interact(this); // Calls the Interact method of the interactable object
             }
             else
             {
+                Debug.Log("[Vice] No interactable object hit.");
                 if (inventoryManager.CurrentItemInHand != null && inventoryManager.CurrentItemInHand.itemName == "Pot")
                 {
                     PlacePotOnGround();
@@ -73,12 +75,6 @@ public class PlayerInteraction : MonoBehaviour
                 }
             }
         }
-    }
-
-    // UVLight Interactions
-    public void HandleUVLightInteraction(UVLight uvLight)
-    {
-        // Add UVLight interaction logic here, if any.
     }
 
     // CannabisPlant Interactions
@@ -143,6 +139,45 @@ public class PlayerInteraction : MonoBehaviour
         {
             Debug.LogError("[Vice] CannabisPlant prefab not found in Resources/Items folder.");
         }
+    }
+
+    // Table Interactions
+    public void HandleTableInteraction(Table table)
+    {
+        InventoryItem itemInHand = inventoryManager.CurrentItemInHand;
+
+        if (itemInHand != null)
+        {
+            Debug.Log($"[Vice] Trying to add {itemInHand.itemName} to the table.");
+            bool added = table.AddItem(itemInHand.itemName);
+            if (added)
+            {
+                inventoryManager.RemoveItemInHand();
+                Debug.Log($"[Vice] {itemInHand.itemName} added to the table.");
+            }
+            else
+            {
+                Debug.Log($"[Vice] Table already has an {itemInHand.itemName}.");
+            }
+
+            if (table.CanCombine())
+            {
+                CombineItems(table);
+            }
+        }
+    }
+
+    private void CombineItems(Table table)
+    {
+        playerInventory.AddItem("Packed Cannabis", 1);
+        table.ResetTable();
+        Debug.Log("[Vice] Packed Cannabis created.");
+    }
+
+    // UVLight Interactions
+    public void HandleUVLightInteraction(UVLight uvlight)
+    {
+        // Add functions for UVLight here.
     }
 
     void UpdatePotPreview()
