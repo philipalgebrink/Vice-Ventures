@@ -16,10 +16,10 @@ public class PlayerInventory : MonoBehaviour
 
     void LoadItemDatabase()
     {
-        itemDatabase = Resources.Load<ItemDatabase>("ItemDatabase");
+        itemDatabase = Resources.Load<ItemDatabase>("Databases/ItemDatabase");
         if (itemDatabase == null)
         {
-            Debug.LogError("[Vice] ItemDatabase not found in Resources folder.");
+            Debug.LogError("[Vice] ItemDatabase not found in Resources/Databases folder.");
         }
         else
         {
