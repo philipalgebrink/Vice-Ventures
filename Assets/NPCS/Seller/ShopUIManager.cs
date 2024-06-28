@@ -33,8 +33,6 @@ public class ShopUIManager : MonoBehaviour
             return;
         }
 
-        shopPanel.SetActive(false); // Ensure the shop panel is hidden at start
-
         // Find and assign PlayerInventory and PlayerStats
         playerInventory = FindObjectOfType<PlayerInventory>();
         playerStats = FindObjectOfType<PlayerStats>();

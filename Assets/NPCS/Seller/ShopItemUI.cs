@@ -31,11 +31,11 @@ public class ShopItemUI : MonoBehaviour
         {
             playerInventory.AddItem(itemData.itemName, 1);
             playerStats.money -= itemData.price;
-            Debug.Log($"Bought {itemData.itemName} for {itemData.price} $.");
+            Debug.Log($"[Vice] Bought {itemData.itemName} for {itemData.price} $.");
         }
         else
         {
-            Debug.Log("Not enough $ to buy this item.");
+            Debug.Log("[Vice] Not enough $ to buy this item.");
         }
     }
 }
