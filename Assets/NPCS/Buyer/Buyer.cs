@@ -3,30 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Buyer : MonoBehaviour
+public class Buyer : NpcBase
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Interact(PlayerInteraction playerInteraction)
     {
-        
+        Debug.Log("[Vice] Buyer: Interact method called.");
+        // GameManager.instance.AddItemToHand(new InventoryItem("Cannabis", null, "A plant that can be harvested for its buds.", 1, 10, null));
     }
 
-    // Update is called once per frame
-    void Update()
+    // Buyer Interactions
+    public void HandleBuyerInteraction()
     {
-        var thisCollider = GetComponent<Collider>();
-
-        if (!thisCollider)
-            return;
-
+        Debug.Log("[Vice] Interacting with: Buyer");
+        // BuyerUIManager.Instance.OpenShop(this);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("Buyer has collided with " + other.name);
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log("Hello, I am a buyer. I want to buy something.");
-        }
-    }
 }

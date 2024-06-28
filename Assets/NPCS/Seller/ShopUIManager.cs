@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShopUIManager : MonoBehaviour
+public class ShopUIManager : UIManagerBase
 {
     public static ShopUIManager Instance { get; private set; }
 
@@ -27,6 +27,11 @@ public class ShopUIManager : MonoBehaviour
             return; // Early return to avoid running the rest of Awake() on the duplicate instance
         }
 
+        SetupUIManager();
+    }
+
+    public void SetupUIManager()
+    {
         if (shopPanel == null || itemsContainer == null || itemPrefab == null || closeButton == null)
         {
             Debug.LogError("[Vice] Some references are not assigned in the ShopUIManager script.");
@@ -46,14 +51,23 @@ public class ShopUIManager : MonoBehaviour
         closeButton.onClick.AddListener(CloseShop);
     }
 
+    public override void CloseUI()
+    {
+        CloseShop();
+    }
+
     private void Start()
     {
         // Ensure the shop panel is hidden at start
-        shopPanel.SetActive(false);
+        CloseShop();
     }
 
     public void OpenShop(Seller seller)
     {
+        // Look for the HUDManager object in the scene.
+        HUDManager hudManager = FindObjectOfType<HUDManager>();
+        hudManager.CloseAllUIs();
+
         isShopOpen = true;
         shopPanel.SetActive(true);
         PopulateShop(seller);

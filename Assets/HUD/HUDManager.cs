@@ -3,8 +3,23 @@ using UnityEngine.UI;
 
 public class HUDManager : MonoBehaviour
 {
+    public HUDManager Instance { get; private set; }
+
     public InventoryManager inventoryManager; // Reference to InventoryManager
     public Image itemInHandImage; // Reference to the Image component displaying item in hand
+
+    public void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return; // Early return to avoid running the rest of Awake() on the duplicate instance
+        }
+    }
 
     void Start()
     {
@@ -31,6 +46,14 @@ public class HUDManager : MonoBehaviour
             Color imageColor = itemInHandImage.color;
             imageColor.a = itemSprite != null ? 1f : 0f; // Set alpha to 1 if itemSprite is not null, otherwise 0
             itemInHandImage.color = imageColor;
+        }
+    }
+
+    public void CloseAllUIs() {
+        UIManagerBase[] uiManagers = FindObjectsOfType<UIManagerBase>();
+        foreach (UIManagerBase uiManager in uiManagers)
+        {
+            uiManager.CloseUI();
         }
     }
 }

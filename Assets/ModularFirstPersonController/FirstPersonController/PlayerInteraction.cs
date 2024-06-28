@@ -174,14 +174,6 @@ public class PlayerInteraction : MonoBehaviour
         Debug.Log("[Vice] Packed Cannabis created.");
     }
 
-    // Seller Interactions
-    public void HandleSellerInteraction(Seller seller)
-    {
-        Debug.Log("[Vice] Interacting with: Seller");
-        ShopUIManager.Instance.OpenShop(seller);
-    }
-
-
     // UVLight Interactions
     public void HandleUVLightInteraction(UVLight uvlight)
     {

@@ -8,6 +8,13 @@ public class Seller : Interactable
     public override void Interact(PlayerInteraction playerInteraction)
     {
         Debug.Log("[Vice] Interacting with: Seller");
-        playerInteraction.HandleSellerInteraction(this);
+        HandleSellerInteraction();
+    }
+
+    // Seller Interactions
+    public void HandleSellerInteraction()
+    {
+        // Debug.Log("[Vice] Interacting with: Seller");
+        ShopUIManager.Instance.OpenShop(this);
     }
 }
